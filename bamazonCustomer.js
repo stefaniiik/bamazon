@@ -1,11 +1,10 @@
-var mySQL = require('mysql');
-var inquirer = require('inquirer');
+const inquirer = require('inquirer');
 
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "root",
+    password: "",
     databse: "bamazon"
 });
 
@@ -17,82 +16,169 @@ connection.connect(function(err) {
 
 function queryAllProducts(){
     connection.query("SELECT * FROM products", function(err, res){
-        for (var i = 0 < res.length; i++;){
+	if(err) throw err;
+        for (var i = 0; < res.length; i++){
             console.log(res[i].id + '|' + res[i].product_name + '|' + res[i].product_price + '|' + res[i].department_name +
             '|' + res[i].inventory);
         }
-        console.log("--------------------------");
+        console.log("------------------------------");
     });
 }
 
 console.log(query.sql);
 
-//validate that the user is entering positive numbers
-function validateInput(value){
-	var integer = Number.isInteger(parseFloat(value));
-	var sign = Math.sign(value);
-
-	if (integer && (sign === 1 )) {
-		return true;
-	} else {
-		return 'Please enter a whole non-zero number.';
-	}
-}
 //Prompt what the user wants to purchase
 function userPurchase () {
 	inquirer
 	.promt([
 	{
 		type: 'input',
-		name: 'item_id',
+		name: 'id',
 		message: 'Please enter the Item ID which you would like to purchase.',
-		validate: validateInput,
-		filter: Number
+		validate: function(value){
+	if(isNaN(value) == false && parseInt(value) <= res.length && parseInt(value) > 0){
+		return true;
+		} else{
+		returnfalse;
+		}
+	}
 	},
 	{
 		type: 'input',
 		name: 'quantity',
 		message: 'How many would you like to purchase?',
-		filter: Number
+		validate: function(value){
+		if(isNaN(value)){
+		return false;
+		} else{
+			return true;
+		}
+	}
 	}
 ]).then(function(input){
 	console.log('Customer has selected: \n    item_id = '  + input.item_id + '\n    quantity = ' + input.quantity);
-	var item = input.item_id;
-    var quantity = input.quantity;
-//Query to confirm the item selected is available. Question mark allows for what use inputs
-var querySql = 'SELECT * FROM products WHERE ?';
+	var item = (input.id)-1;
+        var quantity = parseInt(input.quantity);
+	var grandTotal = parseFloat(((res[item].product_price)*quantity).toFixed(2));
 
-connection.query(querySql, {item_id: item}, function (err, res) {
-	if (err) throw err;
-console.log('data = ' + JSON.stringify(res));
+	//check inventory 
+if(res[item].inventory >= quantity){
 
-}); else{
-	var productInfo = res[0];
-console.log('productData = ' + JSON.stringify(productData));
-console.log('productData.stock_quantity = ' + productData.stock_quantity);
+//update quantity in products table
+connection.query("UPDATE products SET ? WHERE ? ", [
+{inventory: (res[item].inventory - quantity)},
+{item_id: input.id}
+], function (err, result){
+if(err) throw err;
+console.log("Accepted. Your total is $" + grandTotal.toFixed(2));
+});
 
-//if quantity is in stock
-
-if (quantity <= productInfo.inventory) {
-	console.log('Item in stock. Placing order now!');
-
-//update query
-var updateQuery = 'UPDATE products SET inventory =' + (prdocutInfo.inventory - quantity) + ' WHERE item_id = ' + item;
-//console.log(updateQuery = ' + updateQuery) {
-
-//update inventory
-connection.query(updateQuery, function (err, res){
-	if(err) throw err;
-
-console.log('Your order has been place. Your total is $' + productInfo.price * quantity);
-console.log('Thank you for shopping');
-console.log('----------------------------\n');
-
-//ending database connection
-connection.end();
-})
+//ask if continue shopping
+function repropmt(){
+inquirer
+.prompt([{
+type: 'confirm',
+name: 'reply',
+message: 'Would you like to continue shopping?"
+}]).then(function(input){
+if(input.reply){
+queryAllProducts();
 } else{
-	console.log('Sorry, item selected low on qauntity. Cannot place order as it');
-	console.log('Please choose a lesser amount');
-	console.log('----------------------------------------------');
+console.log("Until next time!");
 }
+});
+}
+queryAllProducts();
+
+const mySQL = require('mysql');
+const inquirer = require('inquirer');
+
+const connection = mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "",
+    databse: "bamazon"
+});
+
+connection.connect(function(err) {
+    if(err)throw err;
+    console.log("connected as id" + connection.threadId);
+    queryAllProducts();
+});
+
+function queryAllProducts(){
+    connection.query("SELECT * FROM products", function(err, res){
+	if(err) throw err;
+        for (var i = 0; < res.length; i++){
+            console.log(res[i].id + '|' + res[i].product_name + '|' + res[i].product_price + '|' + res[i].department_name +
+            '|' + res[i].inventory);
+        }
+        console.log("------------------------------");
+    });
+}
+
+console.log(query.sql);
+
+//Prompt what the user wants to purchase
+function userPurchase () {
+	inquirer
+	.promt([
+	{
+		type: 'input',
+		name: 'id',
+		message: 'Please enter the Item ID which you would like to purchase.',
+		validate: function(value){
+	if(isNaN(value) == false && parseInt(value) <= res.length && parseInt(value) > 0){
+		return true;
+		} else{
+		returnfalse;
+		}
+	}
+	},
+	{
+		type: 'input',
+		name: 'quantity',
+		message: 'How many would you like to purchase?',
+		validate: function(value){
+		if(isNaN(value)){
+		return false;
+		} else{
+			return true;
+		}
+	}
+	}
+]).then(function(input){
+	console.log('Customer has selected: \n    item_id = '  + input.item_id + '\n    quantity = ' + input.quantity);
+	var item = (input.id)-1;
+        var quantity = parseInt(input.quantity);
+	var grandTotal = parseFloat(((res[item].product_price)*quantity).toFixed(2));
+
+	//check inventory 
+if(res[item].inventory >= quantity){
+
+//update quantity in products table
+connection.query("UPDATE products SET ? WHERE ? ", [
+{inventory: (res[item].inventory - quantity)},
+{item_id: input.id}
+], function (err, result){
+if(err) throw err;
+console.log("Accepted. Your total is $" + grandTotal.toFixed(2));
+});
+
+//ask if continue shopping
+function repropmt(){
+inquirer
+.prompt([{
+type: 'confirm',
+name: 'reply',
+message: 'Would you like to continue shopping?"
+}]).then(function(input){
+if(input.reply){
+queryAllProducts();
+} else{
+console.log("Until next time!");
+}
+});
+}
+queryAllProducts();
