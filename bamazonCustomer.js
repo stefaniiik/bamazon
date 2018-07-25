@@ -72,9 +72,9 @@ function userPurchase() {
 				], function (err, result) {
 					if (err) throw err;
 					console.log("Accepted. Your total is $" + grandTotal.toFixed(2));
-
-				});
-			
+				
+				});	
+			}
 				//ask if continue shopping
 				function repropmt() {
 					inquirer
@@ -90,4 +90,3 @@ function userPurchase() {
 							}
 						});
 				}
-				queryAllProducts();
