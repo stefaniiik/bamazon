@@ -5,8 +5,8 @@ const connection = mysql.createConnection({
 	host: "localhost",
 	port: 3306,
 	user: "root",
-	password: "",
-	databse: "bamazon"
+	password: "root",
+	database: "bamazon"
 });
 
 connection.connect(function (err) {
@@ -18,23 +18,23 @@ connection.connect(function (err) {
 function queryAllProducts() {
 	connection.query("SELECT * FROM products", function (err, res) {
 		if (err) throw err;
-		for (var i = 0 < res.length; i++;) {
+		for (var i = 0; i < res.length; i++) {
 			console.log(res[i].id + '|' + res[i].product_name + '|' + res[i].product_price + '|' + res[i].department_name +
 				'|' + res[i].inventory);
 		}
 		console.log("------------------------------");
 	});
+	userPurchase();
 }
 
-console.log(query.sql);
-
+console.log('');
 //Prompt what the user wants to purchase
 function userPurchase() {
 	inquirer
-		.promt([
+		.prompt([
 			{
 				type: 'input',
-				name: 'id',
+				name: 'item_id',
 				message: 'Please enter the Item ID which you would like to purchase.',
 				validate: function (value) {
 					if (isNaN(value) == false && parseInt(value) <= res.length && parseInt(value) > 0) {
@@ -57,8 +57,8 @@ function userPurchase() {
 				}
 			}
 		]).then(function (input) {
-			console.log('Customer has selected: \n    item_id = ' + input.item_id + '\n    quantity = ' + input.quantity);
-			var item = (input.id) - 1;
+			console.log('Customer has selected: \n    id = ' + input.id + '\n    quantity = ' + input.quantity);
+			var item = (input.item_id) - 1;
 			var quantity = parseInt(input.quantity);
 			var grandTotal = parseFloat(((res[item].product_price) * quantity).toFixed(2));
 
@@ -68,15 +68,18 @@ function userPurchase() {
 				//update quantity in products table
 				connection.query("UPDATE products SET ? WHERE ? ", [
 					{ inventory: (res[item].inventory - quantity) },
-					{ item_id: input.id }
+					{ item_id: input.item_id }
 				], function (err, result) {
 					if (err) throw err;
 					console.log("Accepted. Your total is $" + grandTotal.toFixed(2));
 				
 				});	
 			}
+			reprompt();
+		});
+	}
 				//ask if continue shopping
-				function repropmt() {
+				function reprompt() {
 					inquirer
 						.prompt([{
 							type: 'confirm',
