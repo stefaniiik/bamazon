@@ -33,6 +33,7 @@ Make sure you save and require the MySQL and Inquirer npm packages in your homew
 
 #Screencapture
 
+![Bamazon](capture.png)
 Image is not showing, please view "capture" image in origin master
 
 #Problems
