@@ -36,28 +36,28 @@ function userPurchase() {
 				type: 'input',
 				name: 'item_id',
 				message: 'Please enter the Item ID which you would like to purchase.',
-				validate: function(value){
+				validate: function (value) {
 					var valid = value.match(/^[0-9]+$/)
-					if(valid){
+					if (valid) {
 						return true
 					}
-						return 'Please enter a valid Product ID'
+					return 'Please enter a valid Product ID'
 				}
 			},
 			{
 				type: 'input',
 				name: 'quantity',
 				message: 'How many would you like to purchase?',
-				validate: function(value){
+				validate: function (value) {
 					var valid = value.match(/^[0-9]+$/)
-					if(valid){
+					if (valid) {
 						return true
 					}
-						return 'Please enter a valid Product ID'
+					return 'Please enter a valid Product ID'
 				}
 			}
 		]).then(function (input) {
-			console.log('Customer has selected: \n    id = ' + input.id + '\n    quantity = ' + input.quantity);
+			console.log('Customer has selected: \n    id = ' + input.item_id + '\n    quantity = ' + input.quantity);
 			var item = (input.item_id) - 1;
 			var quantity = parseInt(input.quantity);
 			var grandTotal = parseFloat(((res[item].product_price) * quantity).toFixed(2));
@@ -72,24 +72,24 @@ function userPurchase() {
 				], function (err, result) {
 					if (err) throw err;
 					console.log("Accepted. Your total is $" + grandTotal.toFixed(2));
-				
-				});	
+
+				});
 			}
 			reprompt();
 		});
-	}
-				//ask if continue shopping
-				function reprompt() {
-					inquirer
-						.prompt([{
-							type: 'confirm',
-							name: 'reply',
-							message: 'Would you like to continue shopping?'
-						}]).then(function (input) {
-							if (input.reply) {
-								queryAllProducts();
-							} else {
-								console.log("Until next time!");
-							}
-						});
-				}
+}
+//ask if continue shopping
+function reprompt() {
+	inquirer
+		.prompt([{
+			type: 'confirm',
+			name: 'reply',
+			message: 'Would you like to continue shopping?'
+		}]).then(function (input) {
+			if (input.reply) {
+				queryAllProducts();
+			} else {
+				console.log("Until next time!");
+			}
+		});
+}
