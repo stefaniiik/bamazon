@@ -31,13 +31,13 @@ Make sure you save and require the MySQL and Inquirer npm packages in your homew
 * JavsScript
 
 
-#Screencapture
+##Screencapture
 
 ![Bamazon](capture.png)
 Image is not showing, please view "capture" image in origin master
 
-#Problems
+##Problems
 The bulk of my application works. There is one glitch when reprompting, which is regardless if you want to continue you shopping you have to continue. Other problems while recreating this application included minimal mistakes such as forgetting closing curly braces, misspelled words, and not calling on functions.
 
-#Authors
+##Authors
 Stefani Krautstrunk
