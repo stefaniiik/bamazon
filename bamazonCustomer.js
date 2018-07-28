@@ -23,11 +23,11 @@ function queryAllProducts() {
 				'|' + res[i].inventory);
 		}
 		console.log("------------------------------");
+		userPurchase();
 	});
-	userPurchase();
 }
 
-console.log('');
+// console.log('');
 //Prompt what the user wants to purchase
 function userPurchase() {
 	inquirer
@@ -36,24 +36,24 @@ function userPurchase() {
 				type: 'input',
 				name: 'item_id',
 				message: 'Please enter the Item ID which you would like to purchase.',
-				validate: function (value) {
-					if (isNaN(value) == false && parseInt(value) <= res.length && parseInt(value) > 0) {
-						return true;
-					} else {
-						returnfalse;
+				validate: function(value){
+					var valid = value.match(/^[0-9]+$/)
+					if(valid){
+						return true
 					}
+						return 'Please enter a valid Product ID'
 				}
 			},
 			{
 				type: 'input',
 				name: 'quantity',
 				message: 'How many would you like to purchase?',
-				validate: function (value) {
-					if (isNaN(value)) {
-						return false;
-					} else {
-						return true;
+				validate: function(value){
+					var valid = value.match(/^[0-9]+$/)
+					if(valid){
+						return true
 					}
+						return 'Please enter a valid Product ID'
 				}
 			}
 		]).then(function (input) {
